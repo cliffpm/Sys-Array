@@ -25,7 +25,7 @@ module pe #(
 
 
     // 2 stage design, multiply first, then add
-so 
+
     logic signed [(DATA_WIDTH*2)-1:0] prod_reg;
     logic signed [DATA_WIDTH-1:0] act_reg1, act_reg2;
     logic signed [ACC_WIDTH-1:0] psum_reg;
