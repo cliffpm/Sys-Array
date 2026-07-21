@@ -107,7 +107,7 @@ values because the loop exited before the last two results had time to
 reach `act_out` - a good reminder that "the test passes" isn't the same as
 "the test actually covers what you think it does."
  
-## Design decisions worth remembering for an interview writeup
+## Important Notes and Design Decisions
  
 - **2-stage internal pipeline** (mult, then add) rather than a single-cycle
   MAC: splits what would likely be the critical path in a larger array, at
@@ -124,29 +124,8 @@ reach `act_out` - a good reminder that "the test passes" isn't the same as
   needing a separate load phase before streaming can start (built in
   Phase 2/3), as opposed to output-stationary designs where both operand
   matrices stream through the array on every computation.
-## A verification lesson worth carrying into Phase 2
- 
-Getting the *timing* of a testbench right was consistently harder than
-getting the PE's arithmetic right. Two real bugs surfaced purely from
-testbench sequencing, not from the DUT:
- 
-1. Assigning `act_in = val; act_in = 0;` back-to-back with no clock edge
-   between them is invisible to the DUT - both assignments happen in zero
-   simulation time, so the hardware only ever sees the final value (`0`).
-   Any two assignments to the same signal need a real `@(posedge/negedge
-   clk)` between them if the DUT is meant to observe the intermediate
-   value.
-2. Moving *where* in a sequence a signal gets cleared changes how many
-   cycles later a correct result should be checked - the required wait
-   isn't a fixed constant tied only to "the pipeline is N stages," it
-   depends on exactly when the stimulus was actually visible to the DUT's
-   registers.
-Both were only caught by compiling and simulating with real values printed
-out - not by re-reading the code and reasoning about it abstractly. That's
-the same discipline Phase 2 (grid-level skew) and Phase 4 (the full
-verification suite) will lean on even more heavily.
- 
-## Next: Phase 2
+
+## Phase 2
  
 Wire multiple PEs into a grid, get the activation skew right (empirically
 confirmed to differ from a naive "just double everything" guess when
